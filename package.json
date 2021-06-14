@@ -2,14 +2,21 @@
   "name": "ethereum-contract-workflow",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
+    "compile": "ts-node ./scripts/compile.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "main": "scripts/compile",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "solc": "0.8.5"
+    "fs-extra": "^10.0.0",
+    "solc": "0.8.5",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.2"
   }
 }

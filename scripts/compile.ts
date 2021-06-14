@@ -1,6 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-const solc = require("solc");
+import fs from "fs";
+import path from "path";
+import solc from "solc";
 
 const contractPath = path.resolve(__dirname, "../contracts", "Car.sol");
 const contractSource = fs.readFileSync(contractPath, "utf8");
@@ -23,4 +23,4 @@ var input = {
 
 var output = JSON.parse(solc.compile(JSON.stringify(input)));
 
-console.log(output);
+console.log(output.contracts["Car.sol"].Car.abi);
