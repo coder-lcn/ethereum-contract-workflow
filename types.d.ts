@@ -7,3 +7,13 @@ declare module "solc" {
   const solc: solc.API;
   export = solc;
 }
+
+declare module "ganache-cli" {
+  namespace ganache {
+    export interface API {
+      provider: () => string;
+    }
+  }
+  const ganache: ganache.API;
+  export = ganache;
+}

@@ -15,6 +15,9 @@ yarn compile
 
 # 部署合约
 yarn deploy
+
+# 测试
+yarn test
 ```
 
 ## 部署合约需注意：

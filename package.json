@@ -4,8 +4,10 @@
   "description": "",
   "scripts": {
     "compile": "ts-node ./scripts/compile.ts",
+    "predeploy": "yarn compile",
     "deploy": "ts-node ./scripts/deploy.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "yarn compile",
+    "test": "mocha --require ts-node/register 'tests/**/*.spec.{ts,tsx}'"
   },
   "main": "scripts/compile",
   "keywords": [],
@@ -21,6 +23,9 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.11",
-    "@types/node": "^15.12.2"
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^15.12.2",
+    "ganache-cli": "^6.12.2",
+    "mocha": "^9.0.0"
   }
 }
