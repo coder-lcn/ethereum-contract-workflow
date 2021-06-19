@@ -17,3 +17,13 @@ declare module "ganache-cli" {
   const ganache: ganache.API;
   export = ganache;
 }
+
+declare interface Window {
+  web3: any;
+  ethereum: any;
+}
+
+declare interface Account {
+  account: string;
+  eth: string;
+}

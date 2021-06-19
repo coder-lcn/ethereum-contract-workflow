@@ -1,7 +1,19 @@
 import React from "react";
+import { Navbar } from "./components/Navbar";
+import { AppContext } from "./context";
+import { useAccounts } from "./hooks/useAccounts";
+import { Container } from "./index.styled";
 
 const App = () => {
-  return <div>Welcome to Ethereum ICO DApp!</div>;
+  const accounts = useAccounts();
+
+  return (
+    <AppContext.Provider value={{ accounts }}>
+      <Container>
+        <Navbar />
+      </Container>
+    </AppContext.Provider>
+  );
 };
 
 export default App;

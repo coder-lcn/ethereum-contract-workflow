@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "lib": ["ES2015"],
+    "lib": ["ES2015", "DOM"],
     "typeRoots": ["types.d.ts"],
     "jsx": "preserve",
     "noImplicitAny": false,
