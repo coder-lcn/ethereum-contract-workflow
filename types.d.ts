@@ -27,3 +27,14 @@ declare interface Account {
   account: string;
   eth: string;
 }
+
+declare interface Project {
+  description: string;
+  minInvest: string;
+  maxInvest: string;
+  goal: string;
+  balance: string;
+  investorCount: string;
+  paymentsCount: string;
+  owner: string;
+}

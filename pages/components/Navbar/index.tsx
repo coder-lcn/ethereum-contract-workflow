@@ -6,7 +6,6 @@ import { Container, Content } from "./index.styled";
 
 export const Navbar = () => {
   const { accounts } = useContext(AppContext);
-  console.log(accounts);
 
   const menu = (
     <Menu>
@@ -25,9 +24,13 @@ export const Navbar = () => {
     <Container>
       <TypeArea>
         <Content>
-          <Dropdown overlay={menu} placement="bottomLeft" trigger={["click"]}>
-            <Button>账户信息</Button>
-          </Dropdown>
+          {accounts.length ? (
+            <Dropdown overlay={menu} placement="bottomLeft" trigger={["click"]}>
+              <Button>账户信息</Button>
+            </Dropdown>
+          ) : (
+            <Button onClick={() => window.ethereum.enable()}>连接钱包</Button>
+          )}
           <Button type="primary">创建项目</Button>
         </Content>
       </TypeArea>

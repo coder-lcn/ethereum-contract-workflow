@@ -9,6 +9,7 @@
     "dev": "ts-node server.ts",
     "build": "next build",
     "start": "NODE_ENV=production ts-node server.ts",
+    "sample": "ts-node ./scripts/sample.ts",
     "pretest": "yarn compile",
     "test": "mocha --debug-brk --require ts-node/register 'tests/**/*.spec.{ts,tsx}'"
   },
