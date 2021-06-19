@@ -4,11 +4,20 @@
     "module": "commonjs",
     "lib": ["ES2015"],
     "typeRoots": ["types.d.ts"],
+    "jsx": "preserve",
     "noImplicitAny": false,
     "types": ["node", "mocha"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "strictPropertyInitialization": false
-  }
+    "strictPropertyInitialization": false,
+    "allowJs": true,
+    "strict": false,
+    "noEmit": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/index.js"],
+  "exclude": ["node_modules"]
 }
