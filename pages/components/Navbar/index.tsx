@@ -1,11 +1,14 @@
 import { Button, Dropdown, Menu } from "antd";
-import React, { useContext } from "react";
-import { AppContext } from "../../context";
+import React, { useContext, useState } from "react";
+import { AppContext, ProjectContext } from "../../context";
+import { CreateProject } from "../CreateProject";
 import { TypeArea } from "../TypeArea";
 import { Container, Content } from "./index.styled";
 
 export const Navbar = () => {
+  const { state } = useContext(ProjectContext);
   const { accounts } = useContext(AppContext);
+  const [visible, setVisible] = useState(false);
 
   const menu = (
     <Menu>
@@ -31,9 +34,12 @@ export const Navbar = () => {
           ) : (
             <Button onClick={() => window.ethereum.enable()}>连接钱包</Button>
           )}
-          <Button type="primary">创建项目</Button>
+          <Button type="primary" onClick={() => setVisible(true)} loading={state.type === "createing"}>
+            创建项目
+          </Button>
         </Content>
       </TypeArea>
+      <CreateProject visible={visible} setVisible={setVisible} />
     </Container>
   );
 };

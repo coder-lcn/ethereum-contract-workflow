@@ -38,3 +38,13 @@ declare interface Project {
   paymentsCount: string;
   owner: string;
 }
+
+declare namespace Store {
+  export type ProjectStatus = "createing" | "created" | "normal" | "failed" | "success";
+
+  export interface ProjectStore {
+    type: ProjectStatus;
+    payload?: Project;
+    msg?: string;
+  }
+}

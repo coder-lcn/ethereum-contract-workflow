@@ -1,10 +1,11 @@
-import { Card, Progress } from "antd";
+import { Card, Progress, Spin } from "antd";
 import BigNumber from "bignumber.js";
-import React from "react";
-import web3 from "../../../lib/web3";
-import { useProjectList } from "../../hooks/useProjectList";
+import web3 from "lib/web3";
+import { ProjectContext } from "pages/context";
+import { useProjectList } from "pages/hooks/useProjectList";
+import React, { useContext, useEffect, useState } from "react";
 import { TypeArea } from "../TypeArea";
-import { Container, Content, DataContainer, DataItem } from "./index.styled";
+import { Container, Content, DataContainer, DataItem, ProcessText } from "./index.styled";
 
 const Data = ({ value, label }: { value: string; label: string }) => {
   return (
@@ -16,16 +17,26 @@ const Data = ({ value, label }: { value: string; label: string }) => {
 };
 
 export const ProjestList = () => {
+  const { state } = useContext(ProjectContext);
+  const createing = state.type === "createing";
   const projestList = useProjectList();
+  const [newProjectList, setNewProjectList] = useState<Project[]>([]);
+
+  useEffect(() => {
+    if (state.type === "created") {
+      newProjectList.push(state.payload);
+      setNewProjectList([...newProjectList]);
+    }
+  }, [state]);
 
   return (
     <TypeArea>
       <Container>
-        {projestList.map((item) => {
+        {[...projestList, ...newProjectList].map((item, i) => {
           const percent = new BigNumber(item.balance).div(item.goal).toNumber();
 
           return (
-            <Card title={item.description}>
+            <Card title={item.description} key={i}>
               <Content>
                 <DataContainer>
                   <Data label="募资上限" value={web3.utils.fromWei(item.goal)} />
@@ -36,6 +47,13 @@ export const ProjestList = () => {
                 </DataContainer>
                 <Progress
                   type="circle"
+                  format={(percent) => (
+                    <>
+                      <ProcessText>募资进度</ProcessText>
+                      <br />
+                      {percent}
+                    </>
+                  )}
                   strokeColor={{
                     "0%": "#108ee9",
                     "100%": "#87d068",
@@ -46,6 +64,11 @@ export const ProjestList = () => {
             </Card>
           );
         })}
+        {createing && (
+          <Card style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 330 }}>
+            <Spin size="large" tip="项目创建中" />
+          </Card>
+        )}
       </Container>
     </TypeArea>
   );
