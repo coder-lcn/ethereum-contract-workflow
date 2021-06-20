@@ -18,6 +18,12 @@ yarn deploy
 
 # 测试
 yarn test
+
+# 生成测试数据
+yarn sample
+
+# 运行本地客户端
+yarn dev
 ```
 
 ## 部署合约需注意：
