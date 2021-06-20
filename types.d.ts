@@ -29,6 +29,7 @@ declare interface Account {
 }
 
 declare interface Project {
+  address: string;
   description: string;
   minInvest: string;
   maxInvest: string;
@@ -41,10 +42,17 @@ declare interface Project {
 
 declare namespace Store {
   export type ProjectStatus = "createing" | "created" | "normal" | "failed" | "success";
+  export type InvestmentStatus = "investing" | "normal" | "failed" | "success";
 
   export interface ProjectStore {
     type: ProjectStatus;
     payload?: Project;
+    msg?: string;
+  }
+
+  export interface InvestmentStore {
+    type: InvestmentStatus;
+    payload: Project[];
     msg?: string;
   }
 }

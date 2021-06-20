@@ -47,9 +47,12 @@ export const CreateProject = ({ visible, setVisible }: IProps) => {
         .createProject(values.description, minInvestInWei, maxInvestInWei, goalInWei)
         .send({ from: owner, gas: "5000000" });
 
+      const address = await ProjectList.methods.getCreatedProject().call();
+
       dispatch({
         type: "created",
         payload: {
+          address,
           description: values.description,
           minInvest: minInvestInWei,
           maxInvest: maxInvestInWei,
@@ -82,10 +85,54 @@ export const CreateProject = ({ visible, setVisible }: IProps) => {
         <Form.Item label="最小募资金额" name="minInvest" rules={[{ required: true, message: "请输入最小募资金额" }]}>
           <Input type="number" suffix="ETH" />
         </Form.Item>
-        <Form.Item label="最大募资金额" name="maxInvest" rules={[{ required: true, message: "请输入最大募资金额" }]}>
+        <Form.Item
+          label="最大募资金额"
+          dependencies={["minInvest"]}
+          name="maxInvest"
+          rules={[
+            { required: true, message: "请输入最大募资金额" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                const minInvest = getFieldValue("minInvest");
+
+                if (Number(value) >= Number(minInvest ? minInvest : 0)) {
+                  return Promise.resolve();
+                }
+
+                if (!Boolean(value)) {
+                  return Promise.resolve();
+                }
+
+                return Promise.reject(new Error("不能低于最小募资金额"));
+              },
+            }),
+          ]}
+        >
           <Input type="number" suffix="ETH" />
         </Form.Item>
-        <Form.Item label="募资上限" name="goal" rules={[{ required: true, message: "请输入募资上限" }]}>
+        <Form.Item
+          label="募资上限"
+          name="goal"
+          dependencies={["maxInvest"]}
+          rules={[
+            { required: true, message: "请输入募资上限" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                const maxInvest = getFieldValue("maxInvest");
+
+                if (Number(value) >= Number(maxInvest ? maxInvest : 0)) {
+                  return Promise.resolve();
+                }
+
+                if (!Boolean(value)) {
+                  return Promise.resolve();
+                }
+
+                return Promise.reject(new Error("不能低于最大募资金额"));
+              },
+            }),
+          ]}
+        >
           <Input type="number" suffix="ETH" />
         </Form.Item>
       </Form>
