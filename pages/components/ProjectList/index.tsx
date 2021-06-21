@@ -1,14 +1,17 @@
 import { Button, Card, Empty, Progress, Spin } from "antd";
 import BigNumber from "bignumber.js";
 import web3 from "lib/web3";
-import { investmenContext, ProjectContext } from "pages/context";
+import { investmenContext, payContext, ProjectContext } from "pages/context";
 import { useProjectList } from "pages/hooks/useProjectList";
+import { useUpdateProject } from "pages/hooks/useUpdateProject";
 import React, { useContext, useEffect, useState } from "react";
+import { ExpenditureRecords } from "../ExpenditureRecords";
 import { Investment } from "../Investment";
+import { RequestPay } from "../RequestPay";
 import { TypeArea } from "../TypeArea";
 import { Container, Content, DataContainer, DataItem, ProcessText } from "./index.styled";
 
-const Data = ({ value, label, unit = true }: { value: string; label: string; unit?: boolean }) => {
+const Data = ({ value, label, unit = true }: { value: string; label: React.ReactNode; unit?: boolean }) => {
   return (
     <DataItem>
       <p>
@@ -21,16 +24,21 @@ const Data = ({ value, label, unit = true }: { value: string; label: string; uni
 
 export const ProjestList = () => {
   const { state: investmenState } = useContext(investmenContext);
+  const { state: payState } = useContext(payContext);
   const { state } = useContext(ProjectContext);
 
   const createing = state.type === "createing";
 
   const projestList = useProjectList();
   const [newProjectList, setNewProjectList] = useState<Project[]>([]);
-  const [currInvesmentTarget, setCurrInvesmentTarget] = useState<Project | boolean>(false);
+  const [currInvestmentTarget, setCurrInvestmentTarget] = useState<Project | boolean>(false);
+  const [currPayTarget, setCurrPayTarget] = useState<Project | boolean>(false);
+  const [currPayRecordTarget, setCurrPayRecordTarget] = useState<Project | boolean>(false);
+
+  useUpdateProject(newProjectList, setNewProjectList);
 
   useEffect(() => {
-    if (state.type === "created") {
+    if (state.type === "success") {
       newProjectList.push(state.payload);
       setNewProjectList([...newProjectList]);
     }
@@ -47,17 +55,24 @@ export const ProjestList = () => {
       )}
       <Container>
         {[...projestList, ...newProjectList].map((item, i) => {
-          const percent = new BigNumber(item.balance).div(item.goal).multipliedBy(100).toNumber();
+          const percent = new BigNumber(item.balance).div(item.goal).multipliedBy(100).toNumber().toFixed(2);
           const Investing = investmenState.payload.find((v) => v.address === item.address);
+          const paying = payState.payload.list.find((v) => v.address === item.address);
 
           return (
             <Card
               title={item.description}
               key={i}
               extra={
-                <Button type="primary" onClick={() => setCurrInvesmentTarget(item)} loading={Boolean(Investing)}>
-                  {Investing ? "投资中" : "立即投资"}
-                </Button>
+                <>
+                  <Button type="primary" onClick={() => setCurrInvestmentTarget(item)} loading={Boolean(Investing)}>
+                    {Investing ? "投资中" : "投资"}
+                  </Button>
+                  &nbsp;&nbsp;
+                  <Button type="ghost" onClick={() => setCurrPayTarget(item)} loading={Boolean(paying)}>
+                    {paying ? "正在请求支出" : "支出"}
+                  </Button>
+                </>
               }
             >
               <Content>
@@ -67,11 +82,15 @@ export const ProjestList = () => {
                   <Data label="最大投资金额" value={web3.utils.fromWei(item.maxInvest)} />
                   <Data label="参与投资人数" value={item.investorCount} unit={false} />
                   <Data label="已募资金额" value={web3.utils.fromWei(item.balance)} />
-                  <Data label="资金支出请求数" value={item.paymentsCount} unit={false} />
+                  <Data
+                    label={<a onClick={() => setCurrPayRecordTarget(item)}>资金支出</a>}
+                    value={item.paymentsCount}
+                    unit={false}
+                  />
                 </DataContainer>
                 <Progress
                   type="circle"
-                  format={() => (
+                  format={(percent) => (
                     <>
                       <ProcessText>募资进度</ProcessText>
                       <br />
@@ -82,7 +101,7 @@ export const ProjestList = () => {
                     "0%": "#108ee9",
                     "100%": "#87d068",
                   }}
-                  percent={percent}
+                  percent={Number(percent)}
                 />
               </Content>
             </Card>
@@ -90,11 +109,14 @@ export const ProjestList = () => {
         })}
         {createing && (
           <Card style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 330 }}>
+            ff
             <Spin size="large" tip="项目创建中" />
           </Card>
         )}
       </Container>
-      <Investment project={currInvesmentTarget} setProject={setCurrInvesmentTarget} />
+      <Investment project={currInvestmentTarget} setProject={setCurrInvestmentTarget} />
+      <RequestPay project={currPayTarget} setProject={setCurrPayTarget} />
+      <ExpenditureRecords project={currPayRecordTarget} setProject={setCurrPayRecordTarget} />
     </TypeArea>
   );
 };

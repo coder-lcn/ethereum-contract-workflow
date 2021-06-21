@@ -1,6 +1,6 @@
 import { StoreErrorHandling, StoreSuccessHandling } from "pages/utils";
 
-const reducer = (state: Store.InvestmentStore, action: Store.InvestmentStore) => {
+const reducer = (state: Store.payStore, action: Store.payStore) => {
   const { type, payload } = action;
 
   switch (type) {
@@ -9,9 +9,10 @@ const reducer = (state: Store.InvestmentStore, action: Store.InvestmentStore) =>
       type === "failed" && StoreErrorHandling(action.msg);
       type === "success" && StoreSuccessHandling(action.msg);
 
-      if (payload.length) {
-        const index = state.payload.findIndex((v) => v.address === payload[0].address);
-        state.payload.splice(index, 1);
+      if (payload.list.length) {
+        const index = state.payload.list.findIndex((v) => v.address === payload.list[0].address);
+        state.payload.list.splice(index, 1);
+        state.payload.processingProject = payload.list[0];
       } else {
         StoreErrorHandling("缺少投资项目参数");
       }
@@ -20,8 +21,8 @@ const reducer = (state: Store.InvestmentStore, action: Store.InvestmentStore) =>
         ...state,
         type,
       };
-    case "investing":
-      state.payload.push(payload[0]);
+    case "paying":
+      state.payload.list.push(payload.list[0]);
 
       return {
         ...state,

@@ -6,7 +6,7 @@
     "compile": "ts-node ./scripts/compile.ts",
     "predeploy": "yarn compile",
     "deploy": "ts-node ./scripts/deploy.ts",
-    "dev": "ts-node server.ts",
+    "dev": "next dev",
     "build": "next build",
     "start": "NODE_ENV=production ts-node server.ts",
     "sample": "ts-node ./scripts/sample.ts",

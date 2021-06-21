@@ -110,7 +110,6 @@ export const Investment = ({ project, setProject }: IProps) => {
       onCancel={onCancel}
       afterClose={afterClose}
       centered
-      maskClosable={false}
     >
       <Form
         {...layout}

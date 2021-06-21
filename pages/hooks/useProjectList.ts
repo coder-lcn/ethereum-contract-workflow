@@ -1,3 +1,4 @@
+import { useUpdateProject } from "pages/hooks/useUpdateProject";
 import { useContext, useEffect, useState } from "react";
 import Project from "../../lib/project";
 import ProjectList from "../../lib/projectList";
@@ -6,6 +7,8 @@ import { investmenContext } from "../context";
 export const useProjectList = () => {
   const [list, setList] = useState<Project[]>([]);
   const { state } = useContext(investmenContext);
+
+  useUpdateProject(list, setList);
 
   const getList = async () => {
     const addressList = (await ProjectList.methods.getProjects().call()) as string[];

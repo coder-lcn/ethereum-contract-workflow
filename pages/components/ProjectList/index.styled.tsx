@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, calc(100% / 2 - calc(60px * (2 - 1) / 2)));
   grid-gap: 60px;

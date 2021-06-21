@@ -50,7 +50,8 @@ export const CreateProject = ({ visible, setVisible }: IProps) => {
       const address = await ProjectList.methods.getCreatedProject().call();
 
       dispatch({
-        type: "created",
+        type: "success",
+        msg: "创建成功",
         payload: {
           address,
           description: values.description,
@@ -63,21 +64,13 @@ export const CreateProject = ({ visible, setVisible }: IProps) => {
           owner,
         },
       });
-      dispatch({ type: "success", msg: "创建成功" });
     } catch (error) {
       dispatch({ type: "failed", msg: error.message });
     }
   };
 
   return (
-    <Modal
-      title="创建项目"
-      visible={visible}
-      onOk={onSure}
-      onCancel={onCancel}
-      afterClose={afterClose}
-      maskClosable={false}
-    >
+    <Modal title="创建项目" visible={visible} onOk={onSure} onCancel={onCancel} afterClose={afterClose}>
       <Form {...layout} name="basic" ref={formRef} labelAlign="right" onFinish={onFinish}>
         <Form.Item label="项目名称" name="description" rules={[{ required: true, message: "请输入项目名称" }]}>
           <Input autoComplete="off" />

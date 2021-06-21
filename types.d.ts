@@ -40,9 +40,18 @@ declare interface Project {
   owner: string;
 }
 
+declare interface PayRecord {
+  description: string;
+  pay: string;
+  receiver: string;
+}
+
 declare namespace Store {
-  export type ProjectStatus = "createing" | "created" | "normal" | "failed" | "success";
-  export type InvestmentStatus = "investing" | "normal" | "failed" | "success";
+  type CommonStatus = "normal" | "failed" | "success";
+
+  export type ProjectStatus = "createing" | CommonStatus;
+  export type InvestmentStatus = "investing" | CommonStatus;
+  export type payStatus = "paying" | CommonStatus;
 
   export interface ProjectStore {
     type: ProjectStatus;
@@ -53,6 +62,15 @@ declare namespace Store {
   export interface InvestmentStore {
     type: InvestmentStatus;
     payload: Project[];
+    msg?: string;
+  }
+
+  export interface payStore {
+    type: payStatus;
+    payload: {
+      list: Project[];
+      processingProject?: Project;
+    };
     msg?: string;
   }
 }

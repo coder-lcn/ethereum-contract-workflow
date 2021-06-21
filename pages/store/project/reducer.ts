@@ -6,14 +6,12 @@ const reducer = (state: Store.ProjectStore, action: Store.ProjectStore) => {
   switch (type) {
     case "createing":
       return action;
-    case "created":
-      return { ...state, ...action };
     case "failed":
       StoreErrorHandling(action.msg);
       return action;
     case "success":
       StoreSuccessHandling(action.msg);
-      return action;
+      return { ...state, ...action };
     default:
       return state;
   }
