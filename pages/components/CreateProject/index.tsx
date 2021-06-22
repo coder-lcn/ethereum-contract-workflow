@@ -17,7 +17,7 @@ interface IProps {
 export const CreateProject = ({ visible, setVisible }: IProps) => {
   const { dispatch } = useContext(ProjectContext);
 
-  const { accounts } = useContext(AppContext);
+  const { account } = useContext(AppContext);
   const formRef = useRef<FormInstance | null>(null);
 
   const onCancel = () => {
@@ -33,8 +33,6 @@ export const CreateProject = ({ visible, setVisible }: IProps) => {
   };
 
   const onFinish = async (values: Project) => {
-    const owner = accounts[0].account;
-
     const minInvestInWei = web3.utils.toWei(values.minInvest, "ether");
     const maxInvestInWei = web3.utils.toWei(values.maxInvest, "ether");
     const goalInWei = web3.utils.toWei(values.goal, "ether");
@@ -45,7 +43,7 @@ export const CreateProject = ({ visible, setVisible }: IProps) => {
     try {
       await ProjectList.methods
         .createProject(values.description, minInvestInWei, maxInvestInWei, goalInWei)
-        .send({ from: owner, gas: "5000000" });
+        .send({ from: account, gas: "5000000" });
 
       const address = await ProjectList.methods.getCreatedProject().call();
 
@@ -61,7 +59,7 @@ export const CreateProject = ({ visible, setVisible }: IProps) => {
           balance: "0",
           investorCount: "0",
           paymentsCount: "0",
-          owner,
+          owner: account,
         },
       });
     } catch (error) {

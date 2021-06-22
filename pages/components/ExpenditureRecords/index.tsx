@@ -1,65 +1,20 @@
-import { Modal, Table, Tag } from "antd";
+import { Modal, Space, Table, Tag, Typography } from "antd";
 import Project from "lib/project";
+import web3 from "lib/web3";
 import { AppContext } from "pages/context";
 import React, { useContext, useEffect, useState } from "react";
 
-const layout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 20 },
-};
+const { Paragraph } = Typography;
 
 interface IProps {
   project: Project | boolean;
   setProject: (val: Project | boolean) => void;
 }
 
-const columns = [
-  {
-    title: "支出理由",
-    dataIndex: "name",
-    key: "name",
-    render: (text) => <a>{text}</a>,
-  },
-  {
-    title: "支出金额",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "收款人",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "状态",
-    dataIndex: "address",
-    key: "address1",
-  },
-  {
-    title: "操作",
-    key: "tags",
-    dataIndex: "tags",
-    render: (tags) => (
-      <>
-        {tags.map((tag) => {
-          let color = tag.length > 5 ? "geekblue" : "green";
-          if (tag === "loser") {
-            color = "volcano";
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
-  },
-];
-
 export const ExpenditureRecords = ({ project, setProject }: IProps) => {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<PayRecord[]>([]);
-  const { accounts } = useContext(AppContext);
+  const { account } = useContext(AppContext);
   const visible = Boolean(project);
 
   const target: Project = visible
@@ -76,8 +31,72 @@ export const ExpenditureRecords = ({ project, setProject }: IProps) => {
         owner: "",
       };
 
+  const onApprove = async (i: number) => {
+    // const contract = Project(target.address);
+    // await contract.methods.approvePayment(i).send({ from: account, gas: "5000000" });
+  };
+
+  const columns = [
+    {
+      title: "支出理由",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "支出金额",
+      dataIndex: "amount",
+      key: "amount",
+      render: (value: string) => {
+        return web3.utils.fromWei(value, "ether") + " ETH";
+      },
+    },
+    {
+      title: "收款人",
+      dataIndex: "receiver",
+      key: "receiver",
+      render: (receiver: string) => {
+        return (
+          <Paragraph style={{ margin: 0 }} copyable>
+            {receiver}
+          </Paragraph>
+        );
+      },
+    },
+    {
+      title: "状态",
+      dataIndex: "completed",
+      key: "completed",
+      width: 100,
+      render: (status: Boolean) => {
+        // 反对 volcano
+        // 等待投票 geekblue
+        // 赞成 green
+        return (
+          <Tag style={{ margin: 0 }} color="geekblue">
+            等待投票
+          </Tag>
+        );
+      },
+    },
+    {
+      title: "操作",
+      key: "controller",
+      dataIndex: "controller",
+      render: (val: string, row: PayRecord, index: number) => {
+        return (
+          <Space size="middle">
+            <a onClick={() => onApprove(index)}>赞成</a>
+            <a>反对</a>
+          </Space>
+        );
+      },
+    },
+  ];
+
   useEffect(() => {
     const getRecords = async () => {
+      setLoading(true);
+
       const paymentsCount = Number(target.paymentsCount);
       const contract = Project(target.address);
       const tasks = [];
@@ -88,8 +107,11 @@ export const ExpenditureRecords = ({ project, setProject }: IProps) => {
         }
       }
 
-      const payments = await Promise.all<PayRecord[]>(tasks);
-      console.log(payments, "payments");
+      const payments = await Promise.all<PayRecord>(tasks);
+      console.log(payments);
+
+      setData(payments);
+      setLoading(false);
     };
 
     target && visible && getRecords();
@@ -101,9 +123,12 @@ export const ExpenditureRecords = ({ project, setProject }: IProps) => {
       width={1200}
       title={target.description + " 资金支出记录"}
       visible={visible}
+      afterClose={() => {
+        setData([]);
+      }}
       onCancel={() => setProject(false)}
     >
-      <Table bordered columns={columns} dataSource={data} pagination={{ hideOnSinglePage: true }} />
+      <Table loading={loading} bordered columns={columns} dataSource={data} pagination={{ hideOnSinglePage: true }} />
     </Modal>
   );
 };

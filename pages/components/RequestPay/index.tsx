@@ -16,7 +16,7 @@ interface IProps {
 
 export const RequestPay = ({ project, setProject }: IProps) => {
   const { dispatch } = useContext(payContext);
-  const { accounts } = useContext(AppContext);
+  const { account } = useContext(AppContext);
   const formRef = useRef<FormInstance | null>(null);
   const visible = Boolean(project);
 
@@ -49,7 +49,6 @@ export const RequestPay = ({ project, setProject }: IProps) => {
   };
 
   const onFinish = async (values: PayRecord) => {
-    const owner = accounts[0].account;
     const { description, pay, receiver } = values;
 
     const amountInWei = web3.utils.toWei(pay, "ether");
@@ -61,7 +60,7 @@ export const RequestPay = ({ project, setProject }: IProps) => {
 
       await Project(currInvestment.address)
         .methods.createPayment(description, amountInWei, receiver)
-        .send({ from: owner, gas: "5000000" });
+        .send({ from: account, gas: "5000000" });
 
       dispatch({
         type: "success",

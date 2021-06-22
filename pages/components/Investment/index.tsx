@@ -18,7 +18,7 @@ interface IProps {
 
 export const Investment = ({ project, setProject }: IProps) => {
   const { dispatch } = useContext(investmenContext);
-  const { accounts } = useContext(AppContext);
+  const { account } = useContext(AppContext);
   const formRef = useRef<FormInstance | null>(null);
   const visible = Boolean(project);
 
@@ -57,8 +57,6 @@ export const Investment = ({ project, setProject }: IProps) => {
   };
 
   const onFinish = async ({ amount }: { amount: string }) => {
-    const owner = accounts[0].account;
-
     setProject(false);
 
     try {
@@ -68,7 +66,7 @@ export const Investment = ({ project, setProject }: IProps) => {
 
       await contract.methods
         .contribute()
-        .send({ from: owner, value: web3.utils.toWei(amount, "ether"), gas: "5000000" });
+        .send({ from: account, value: web3.utils.toWei(amount, "ether"), gas: "5000000" });
 
       dispatch({ type: "success", msg: "投资成功", payload: [currInvestment] });
     } catch (error) {

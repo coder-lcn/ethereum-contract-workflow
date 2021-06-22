@@ -1,6 +1,9 @@
 import React from "react";
 
-export const AppContextInitValue: { accounts: Account[] } = { accounts: [] };
+export const AppContextInitValue: { account: string; accounts: { account: string; eth: string }[] } = {
+  account: "",
+  accounts: [],
+};
 export const AppContext = React.createContext(AppContextInitValue);
 
 // 项目

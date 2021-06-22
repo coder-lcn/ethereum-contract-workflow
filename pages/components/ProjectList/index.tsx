@@ -1,7 +1,7 @@
 import { Button, Card, Empty, Progress, Spin } from "antd";
 import BigNumber from "bignumber.js";
 import web3 from "lib/web3";
-import { investmenContext, payContext, ProjectContext } from "pages/context";
+import { AppContext, investmenContext, payContext, ProjectContext } from "pages/context";
 import { useProjectList } from "pages/hooks/useProjectList";
 import { useUpdateProject } from "pages/hooks/useUpdateProject";
 import React, { useContext, useEffect, useState } from "react";
@@ -26,6 +26,7 @@ export const ProjestList = () => {
   const { state: investmenState } = useContext(investmenContext);
   const { state: payState } = useContext(payContext);
   const { state } = useContext(ProjectContext);
+  const { account } = useContext(AppContext);
 
   const createing = state.type === "createing";
 
@@ -54,10 +55,16 @@ export const ProjestList = () => {
         <Empty description="暂无项目" style={{ margin: "100px auto" }} />
       )}
       <Container>
+        {createing && (
+          <Card style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 330 }}>
+            <Spin size="large" tip="项目创建中" />
+          </Card>
+        )}
         {[...projestList, ...newProjectList].map((item, i) => {
           const percent = new BigNumber(item.balance).div(item.goal).multipliedBy(100).toNumber().toFixed(2);
           const Investing = investmenState.payload.find((v) => v.address === item.address);
           const paying = payState.payload.list.find((v) => v.address === item.address);
+          const canPay = account === item.owner.toLowerCase();
 
           return (
             <Card
@@ -68,10 +75,16 @@ export const ProjestList = () => {
                   <Button type="primary" onClick={() => setCurrInvestmentTarget(item)} loading={Boolean(Investing)}>
                     {Investing ? "投资中" : "投资"}
                   </Button>
-                  &nbsp;&nbsp;
-                  <Button type="ghost" onClick={() => setCurrPayTarget(item)} loading={Boolean(paying)}>
-                    {paying ? "正在请求支出" : "支出"}
-                  </Button>
+                  {canPay && (
+                    <Button
+                      style={{ marginLeft: 10 }}
+                      type="ghost"
+                      onClick={() => setCurrPayTarget(item)}
+                      loading={Boolean(paying)}
+                    >
+                      {paying ? "正在请求支出" : "支出"}
+                    </Button>
+                  )}
                 </>
               }
             >
@@ -107,12 +120,6 @@ export const ProjestList = () => {
             </Card>
           );
         })}
-        {createing && (
-          <Card style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 330 }}>
-            ff
-            <Spin size="large" tip="项目创建中" />
-          </Card>
-        )}
       </Container>
       <Investment project={currInvestmentTarget} setProject={setCurrInvestmentTarget} />
       <RequestPay project={currPayTarget} setProject={setCurrPayTarget} />

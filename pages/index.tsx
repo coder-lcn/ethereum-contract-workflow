@@ -13,7 +13,7 @@ const App = () => {
   const projectList = useMemo(() => <ProjestList />, []);
 
   return (
-    <AppContext.Provider value={{ accounts }}>
+    <AppContext.Provider value={{ account: accounts.length ? accounts[0].account : "", accounts }}>
       <Provider>
         <ConfigProvider locale={zhCN}>
           <Container>
