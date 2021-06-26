@@ -139,9 +139,7 @@ describe("Project Contract", () => {
     // 收款方
     const receiver = accounts[1];
     // 投资人
-    // 投资人 A、B
     const investorA = accounts[2];
-    const investorB = accounts[3];
 
     // 收款前的余额
     const oldBalance = new BigNumber(await web3.eth.getBalance(receiver));
@@ -176,7 +174,6 @@ describe("Project Contract", () => {
     expect(payment.voterCount).toEqual("1");
     const approvePeople = payment.approve.split("-").filter(Boolean);
     expect(approvePeople.includes(investorA.toLowerCase())).toEqual(true);
-    expect(approvePeople.includes(investorB.toLowerCase())).toEqual(true);
 
     // 收款后的余额
     const newBalance = new BigNumber(await web3.eth.getBalance(receiver));

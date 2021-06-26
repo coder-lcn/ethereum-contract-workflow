@@ -10,6 +10,7 @@
     "build": "next build",
     "sample": "ts-node ./scripts/sample.ts",
     "test": "jest",
+    "pretest": "yarn compile",
     "test:watch": "jest --watch"
   },
   "jest": {
