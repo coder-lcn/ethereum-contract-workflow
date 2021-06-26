@@ -37,6 +37,7 @@ export const Investment = ({ project, setProject }: IProps) => {
         investorCount: "",
         paymentsCount: "",
         owner: "",
+        invested: false,
       };
 
   const min = Number(web3.utils.fromWei(currInvestment.minInvest, "ether"));

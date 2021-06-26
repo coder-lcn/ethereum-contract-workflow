@@ -6,7 +6,7 @@ export const Container = styled.div`
   grid-template-columns: repeat(2, calc(100% / 2 - calc(60px * (2 - 1) / 2)));
   grid-gap: 60px;
   box-sizing: border-box;
-  padding: 60px 0%;
+  padding: 60px 0;
 `;
 
 export const Content = styled.div`
@@ -46,7 +46,7 @@ export const ProcessText = styled.div`
   display: inline-block;
   margin: 0;
   line-height: 1;
-  font-size: 12px;
+  font-size: 18px;
   margin-bottom: 10px;
   background: linear-gradient(90deg, #108ee9, #87d068);
   background-clip: text;

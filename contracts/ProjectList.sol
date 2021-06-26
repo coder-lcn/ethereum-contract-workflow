@@ -16,8 +16,9 @@ contract ProjectList {
         uint256 _goal
     ) public {
         address newProject = address(new Project(_description, _minInvest, _maxInvest, _goal, msg.sender));
-        CreatedProject = newProject;
         projects.push(newProject);
+
+        CreatedProject = newProject;
     }
 
     function getProjects() public view returns (address[] memory) {

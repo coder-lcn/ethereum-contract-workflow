@@ -38,34 +38,39 @@ declare interface Project {
   investorCount: string;
   paymentsCount: string;
   owner: string;
+  invested: boolean;
 }
 
 declare interface PayRecord {
+  key: number;
   description: string;
   pay: string;
   receiver: string;
+  approve: string;
+  disApprove: string;
+  completed: boolean;
 }
 
 declare namespace Store {
   type CommonStatus = "normal" | "failed" | "success";
 
-  export type ProjectStatus = "createing" | CommonStatus;
-  export type InvestmentStatus = "investing" | CommonStatus;
-  export type payStatus = "paying" | CommonStatus;
+  type ProjectStatus = "createing" | CommonStatus;
+  type InvestmentStatus = "investing" | CommonStatus;
+  type payStatus = "paying" | CommonStatus;
 
-  export interface ProjectStore {
+  interface ProjectStore {
     type: ProjectStatus;
     payload?: Project;
     msg?: string;
   }
 
-  export interface InvestmentStore {
+  interface InvestmentStore {
     type: InvestmentStatus;
     payload: Project[];
     msg?: string;
   }
 
-  export interface payStore {
+  interface payStore {
     type: payStatus;
     payload: {
       list: Project[];
@@ -73,4 +78,15 @@ declare namespace Store {
     };
     msg?: string;
   }
+}
+
+declare namespace TabListProps {
+  type Value = "All" | "Invested" | "Create";
+
+  type TabProps = {
+    label: string;
+    value: Value;
+  };
+
+  type TabsProps = TabProps[];
 }

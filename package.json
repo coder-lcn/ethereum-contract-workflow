@@ -6,12 +6,21 @@
     "compile": "ts-node ./scripts/compile.ts",
     "predeploy": "yarn compile",
     "deploy": "ts-node ./scripts/deploy.ts",
-    "dev": "next dev",
+    "start": "next dev",
     "build": "next build",
-    "start": "NODE_ENV=production ts-node server.ts",
     "sample": "ts-node ./scripts/sample.ts",
-    "pretest": "yarn compile",
-    "test": "mocha --debug-brk --require ts-node/register 'tests/**/*.spec.{ts,tsx}'"
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "jest": {
+    "extensionsToTreatAsEsm": [
+      "spec.ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "useESM": true
+      }
+    }
   },
   "main": "scripts/compile",
   "keywords": [],
@@ -34,12 +43,17 @@
     "web3": "^1.3.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-typescript": "^7.14.5",
     "@types/fs-extra": "^9.0.11",
-    "@types/mocha": "^8.2.2",
+    "@types/jest": "^26.0.23",
     "@types/node": "^15.12.2",
     "@types/react": "^17.0.11",
     "@types/styled-components": "^5.1.10",
+    "babel-jest": "^27.0.5",
     "ganache-cli": "^6.12.2",
-    "mocha": "^9.0.0"
+    "jest": "^27.0.5",
+    "ts-jest": "^27.0.3"
   }
 }

@@ -1,4 +1,3 @@
-import assert from "assert";
 import ganache from "ganache-cli";
 import path from "path";
 import Web3 from "web3";
@@ -20,28 +19,25 @@ describe("contract", () => {
   // 3. 每次跑单测时需要部署全新的合约实例，起到隔离的作用
   beforeEach(async () => {
     accounts = await web3.eth.getAccounts();
-    console.log("合约部署账户：", accounts[0]);
-
     contract = await new web3.eth.Contract(abi)
       .deploy({ data: evm.bytecode.object, arguments: [initialBrand] })
       .send({ from: accounts[0], gas: 1000000 });
-    console.log("合约部署成功：", contract.options.address);
   });
 
   // 4. 编写单元测试
   it("deploy a contract", () => {
-    assert.ok(contract.options.address);
+    expect(contract.options.address).toBeDefined();
   });
 
   it("has initial brand", async () => {
     const brand = await contract.methods.brand().call();
-    assert.strictEqual(brand, initialBrand);
+    expect(brand).toEqual(initialBrand)
   });
 
   it("can change the brand", async () => {
     const newBrand = "BWM";
     await contract.methods.setBrand(newBrand).send({ from: accounts[0] });
     const brand = await contract.methods.brand().call();
-    assert.equal(brand, newBrand);
+    expect(brand).toEqual(newBrand);
   });
 });

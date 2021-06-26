@@ -32,6 +32,7 @@ export const RequestPay = ({ project, setProject }: IProps) => {
         investorCount: "",
         paymentsCount: "",
         owner: "",
+        invested: false,
       };
 
   const maxBalance = Number(web3.utils.fromWei(currInvestment.balance, "ether"));

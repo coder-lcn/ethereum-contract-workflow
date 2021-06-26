@@ -2,14 +2,15 @@ import { Button, Card, Empty, Progress, Spin } from "antd";
 import BigNumber from "bignumber.js";
 import web3 from "lib/web3";
 import { AppContext, investmenContext, payContext, ProjectContext } from "pages/context";
-import { useProjectList } from "pages/hooks/useProjectList";
 import { useUpdateProject } from "pages/hooks/useUpdateProject";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useProjectList } from "../../hooks/useProjectList";
 import { ExpenditureRecords } from "../ExpenditureRecords";
 import { Investment } from "../Investment";
 import { RequestPay } from "../RequestPay";
 import { TypeArea } from "../TypeArea";
 import { Container, Content, DataContainer, DataItem, ProcessText } from "./index.styled";
+import { Tabs } from "./tabs";
 
 const Data = ({ value, label, unit = true }: { value: string; label: React.ReactNode; unit?: boolean }) => {
   return (
@@ -31,12 +32,29 @@ export const ProjestList = () => {
   const createing = state.type === "createing";
 
   const projestList = useProjectList();
+  const [type, setType] = useState<TabListProps.Value>("All");
   const [newProjectList, setNewProjectList] = useState<Project[]>([]);
   const [currInvestmentTarget, setCurrInvestmentTarget] = useState<Project | boolean>(false);
   const [currPayTarget, setCurrPayTarget] = useState<Project | boolean>(false);
   const [currPayRecordTarget, setCurrPayRecordTarget] = useState<Project | boolean>(false);
 
   useUpdateProject(newProjectList, setNewProjectList);
+
+  const allProjectList = useMemo(() => {
+    return [...projestList, ...newProjectList].reverse();
+  }, [projestList, newProjectList]);
+
+  const finalProjectList = useMemo(() => {
+    if (type === "All") return allProjectList;
+    return allProjectList.filter(({ owner, invested }) => {
+      if (type === "Create") {
+        return account === owner.toLowerCase();
+      }
+      if (type === "Invested") {
+        return invested;
+      }
+    });
+  }, [allProjectList, type, account]);
 
   useEffect(() => {
     if (state.type === "success") {
@@ -47,6 +65,21 @@ export const ProjestList = () => {
 
   useEffect(() => {
     setNewProjectList([]);
+
+    const updateCurrTarget = (project: Project | boolean, onChange: (v: Project | boolean) => void) => {
+      if (Boolean(project)) {
+        const p = project as Project;
+        const target = projestList.find((item) => p.address === item.address);
+
+        if (target) {
+          onChange(target);
+        }
+      }
+    };
+
+    updateCurrTarget(currInvestmentTarget, setCurrInvestmentTarget);
+    updateCurrTarget(currPayTarget, setCurrPayTarget);
+    updateCurrTarget(currPayRecordTarget, setCurrPayRecordTarget);
   }, [projestList]);
 
   return (
@@ -54,14 +87,16 @@ export const ProjestList = () => {
       {!projestList.length && !newProjectList.length && !createing && (
         <Empty description="暂无项目" style={{ margin: "100px auto" }} />
       )}
+      <Tabs value={type} onChange={setType} />
       <Container>
         {createing && (
           <Card style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 330 }}>
             <Spin size="large" tip="项目创建中" />
           </Card>
         )}
-        {[...projestList, ...newProjectList].map((item, i) => {
+        {finalProjectList.map((item, i) => {
           const percent = new BigNumber(item.balance).div(item.goal).multipliedBy(100).toNumber().toFixed(2);
+
           const Investing = investmenState.payload.find((v) => v.address === item.address);
           const paying = payState.payload.list.find((v) => v.address === item.address);
           const canPay = account === item.owner.toLowerCase();
